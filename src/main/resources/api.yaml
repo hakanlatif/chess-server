@@ -1,0 +1,253 @@
+openapi: "3.0.0"
+info:
+  version: "1.0"
+  title: "Chess Server"
+servers:
+  - url: "https://chess.example.com"
+paths:
+  /chess/v1/create:
+    post:
+      summary: "Creates a chess game"
+      operationId: createChessGame
+      tags:
+        - chess
+      requestBody:
+        description: "Creates a chess game and returns the game ID for players to join. Accepts preferred player color code of the first player"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateChessGameRequest"
+      responses:
+        "200":
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CreateChessGameResponse"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /chess/v1/chessboard/{gameId}:
+    get:
+      summary: "Retrieves the chess game"
+      operationId: getChessboard
+      description: "Returns text representation of chessboard"
+      tags:
+        - chess
+      parameters:
+        - in: path
+          name: gameId
+          description: "Game ID"
+          required: true
+          schema:
+            type: string
+            description: "Game ID of the chess player"
+            example: "vbkpjcnchg6p"
+      responses:
+        "200":
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ChessboardResponse"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /chess/v1/move-chessman:
+    put:
+      summary: "Moves chessman in chessboard"
+      operationId: moveChessman
+      tags:
+        - chess
+      requestBody:
+        description: "Moves chessman in chessboard and returns movement status"
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MoveChessmanRequest"
+      responses:
+        "200":
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MoveChessmanResponse"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  /chess/v1/promote-pawn:
+    put:
+      summary: "Promotes pawn"
+      operationId: promotePawn
+      tags:
+        - chess
+      description: "Switches pawn with given chessman"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PromotePawnRequest"
+      responses:
+        "200":
+          description: "Successful Operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PromotePawnResponse"
+        "400":
+          description: "Bad Request"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: "Not Found"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "422":
+          description: "Unprocessable Entity"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: "Internal Server Error"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+components:
+  schemas:
+    CreateChessGameRequest:
+      type: object
+      properties:
+        color:
+          $ref: "#/components/schemas/Color"
+    CreateChessGameResponse:
+      type: object
+      properties:
+        gameId:
+          type: string
+          description: "Game ID of the chess player"
+          example: "vbkpjcnchg6p"
+    ChessboardResponse:
+      type: object
+      properties:
+        chessboard:
+          type: string
+          description: |
+            Representation of chessboard with given format :
+            <X coord (a, b, c, d, e, f, g, h)>
+            <Y coord (1, 2, 3, 4, 5, 6, 7, 8)>
+            <Short name of chessman (pa, ro, kn, bi, qu, ki)>
+            <Color of the player (b, w)>
+          example: |
+            a8ro, b8knb, c8bib, e8qub, d8kib, f8bib, g8knb, h8rob,
+            a7pab, b7pab, c7pab,d7pab, e7pab, f7pab, g7pab, h7pab,
+            a2paw, b2paw, c2paw, d2paw, e2paw, f2paw, g2paw, h2paw,
+            a1row, b1knw, c1biw, d1quw, e1kiw, f1biw, g1knw, h1row
+        colorOfPlayer:
+          $ref: "#/components/schemas/Color"
+    MoveChessmanRequest:
+      type: object
+      properties:
+        coordinate_from:
+          type: string
+          description: "Coordinate of chessboard to move from"
+          example: "a1"
+        coordinate_to:
+          type: string
+          description: "Coordinate of chessboard to move to"
+          example: "a2"
+        gameId:
+          type: string
+          description: "Game ID of the player"
+          example: "vbkpjcnchg6p"
+    MoveChessmanResponse:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/ChessmanMovementStatus"
+    PromotePawnRequest:
+      type: object
+      properties:
+        gameId:
+          type: string
+          description: "Game ID of the player"
+          example: "vbkpjcnchg6p"
+        chessman:
+          type: string
+          description: "Short name of chessman to promote"
+          example: "qu"
+        coordinate:
+          type: string
+          description: "Coordinate of promoted pawn"
+          example: "a1"
+    PromotePawnResponse:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/ChessmanMovementStatus"
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+          description: "Error message"
+          example: "Unexpected error"
+    Color:
+      type: string
+      enum: [ "black", "white" ]
+    ChessmanMovementStatus:
+      type: string
+      enum: [ "success", "fail", "checkmate", "draw", "promotion" ]
