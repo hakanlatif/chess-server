@@ -3,18 +3,16 @@
 ## About The Project
 This project is a chess game server designed to enable two players to play chess via a user interface. It includes 
 functionality for basic move validation, pawn promotion, and endgame detection, all handled through dedicated endpoints.
-### Running the application
+## Runbook
 
 ```
 mvn clean verify
 mvn spring-boot:run
 ```
 
-## Running tests
+## API
 
-```
-mvn clean test
-```
+For more details, visit the [OpenAPI Spec](docs/index.html) page.
 
 ### Sample Rest Requests
 
