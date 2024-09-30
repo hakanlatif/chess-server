@@ -12,7 +12,7 @@ mvn spring-boot:run
 
 ## API
 
-For more details, visit the [OpenAPI Spec](docs/index.html) page.
+For more details, check the [OpenAPI yaml file](src/main/resources/api.yaml).
 
 ### Sample Rest Requests
 
